@@ -69,7 +69,6 @@ def route_wallet_transact():
 
 
 
-
 PORT = ROOT_PORT
 
 if os.environ.get('PEER') == 'True':
@@ -80,7 +79,7 @@ if os.environ.get('PEER') == 'True':
     
     try:
         blockchain.replace_chain(result_blockchain.chain)
-        print('\n -- Successfully synchronized the local chain')
+        print('\n -- Successfully synchronized the local chain!')
     except Exception as e:
         print(f'\n -- Error synchronizing {e}')
 
