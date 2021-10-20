@@ -1,7 +1,7 @@
 import time
 from backend.util.crypto_hash import crypto_hash
 from backend.util.hex_to_binary import hex_to_binary
-from backend.config import MINE_RATE
+from backend.config import MINE_DIFFICULTY, MINE_RATE
 
 GENESIS_DATA = {
     'timestamp': 1,
@@ -9,7 +9,7 @@ GENESIS_DATA = {
     'hash': 'genesis_hash',
     'data': [],
     'miner': None,
-    'difficulty': 20,
+    'difficulty': MINE_DIFFICULTY,
     'nonce': 'genesis_nonce'
 }
 

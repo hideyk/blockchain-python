@@ -9,7 +9,7 @@ def test_blockchain_instance():
 def test_add_block():
     blockchain = Blockchain()
     data = 'test-data'
-    blockchain.add_block(data)
+    blockchain.add_block(data, 'test-miner')
 
     assert blockchain.chain[-1].data == data
 
@@ -17,7 +17,7 @@ def test_add_block():
 def blockchain_three_blocks():
     blockchain = Blockchain()
     for i in range(3):
-        blockchain.add_block(i)
+        blockchain.add_block(i, 'test-miner')
     return blockchain
 
 def test_is_valid_chain(blockchain_three_blocks):
