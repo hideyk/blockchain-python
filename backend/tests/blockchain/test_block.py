@@ -7,7 +7,7 @@ from backend.config import MINE_RATE, SECONDS
 def test_mine_block():
     last_block = Block.genesis()
     data = 'test-data'
-    block = Block.mine_block(last_block, data, 'test-miner')
+    block = Block.mine_block(last_block, data)
 
     assert isinstance(block, Block)
     assert block.data == data
@@ -23,17 +23,17 @@ def test_genesis():
         assert getattr(genesis, k) == v
 
 def test_quickly_mined_block():
-    last_block = Block.mine_block(Block.genesis(), 'foo', 'test-miner')
-    mined_block = Block.mine_block(last_block, 'bar', 'test-miner')
+    last_block = Block.mine_block(Block.genesis(), 'foo')
+    mined_block = Block.mine_block(last_block, 'bar')
 
     assert mined_block.difficulty == last_block.difficulty + 1
     
 def test_slowly_mined_block():
-    last_block = Block.mine_block(Block.genesis(), 'foo', 'test-miner')
+    last_block = Block.mine_block(Block.genesis(), 'foo')
     
     time.sleep(MINE_RATE / SECONDS)
     
-    mined_block = Block.mine_block(last_block, 'bar', 'test-miner')
+    mined_block = Block.mine_block(last_block, 'bar')
 
     assert mined_block.difficulty == last_block.difficulty - 1
 
@@ -43,13 +43,12 @@ def test_mined_block_limits_at_1():
         'test_last_hash',
         'test_hash',
         'test_data',
-        'test_miner',
         1,
         0
     )
 
     time.sleep(MINE_RATE / SECONDS)
-    mined_block = Block.mine_block(last_block, 'bar', 'test-miner')
+    mined_block = Block.mine_block(last_block, 'bar')
 
     assert mined_block.difficulty == 1
 
@@ -59,7 +58,7 @@ def last_block():
 
 @pytest.fixture
 def block(last_block):
-    return Block.mine_block(last_block, 'test_data', 'test_miner')
+    return Block.mine_block(last_block, 'test_data')
 
 def test_is_valid_block(last_block, block):
     Block.is_valid_block(last_block, block)

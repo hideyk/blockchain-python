@@ -10,4 +10,8 @@ MINE_RATE = 10 * SECONDS
 
 STARTING_BALANCE = 1000
 
-REWARD = 5
+MINING_REWARD = 5
+MINING_REWARD_INPUT = { 'address': '*--official-mining-reward--*'}
+
+PUBLISH_KEY = "pub-c-c73a7b6c-a9d3-427d-a4cb-d581b4f80bd3"
+SUBSCRIBE_KEY = "sub-c-cf130334-2974-11ec-b8a4-52e976b77916"

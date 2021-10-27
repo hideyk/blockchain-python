@@ -1,4 +1,5 @@
 import time
+from backend.config import PUBLISH_KEY, SUBSCRIBE_KEY
 from backend.blockchain.block import Block
 from backend.wallet.transaction import Transaction
 from backend.wallet.transaction_pool import TransactionPool
@@ -6,12 +7,9 @@ from pubnub.pubnub import PubNub
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.callbacks import SubscribeCallback
 
-publish_key = "pub-c-c73a7b6c-a9d3-427d-a4cb-d581b4f80bd3"
-subscribe_key = "sub-c-cf130334-2974-11ec-b8a4-52e976b77916"
-
 pnconfig = PNConfiguration()
-pnconfig.publish_key = publish_key 
-pnconfig.subscribe_key = subscribe_key
+pnconfig.publish_key = PUBLISH_KEY 
+pnconfig.subscribe_key = SUBSCRIBE_KEY
 
 CHANNELS = {
     'TEST': 'TEST',
@@ -37,6 +35,9 @@ class Listener(SubscribeCallback):
 
             try:
                 self.blockchain.replace_chain(potential_chain)
+                self.transaction_pool.clear_blockchain_transactions(
+                    self.blockchain
+                )
                 print(f'\n -- Successfully replaced the local chain')
             except Exception as e:
                 print(f'\n -- Did not replace chain: {e}')

@@ -8,7 +8,6 @@ GENESIS_DATA = {
     'last_hash': 'genesis_last_hash',
     'hash': 'genesis_hash',
     'data': [],
-    'miner': None,
     'difficulty': MINE_DIFFICULTY,
     'nonce': 'genesis_nonce'
 }
@@ -18,12 +17,11 @@ class Block:
     Block: A unit of storage
     Store transactions in a blockchain that supports a cryptocurrency.
     """
-    def __init__(self, timestamp, last_hash, hash, data, miner, difficulty, nonce):
+    def __init__(self, timestamp, last_hash, hash, data, difficulty, nonce):
         self.timestamp = timestamp
         self.last_hash = last_hash
         self.hash = hash
         self.data = data
-        self.miner = miner
         self.difficulty = difficulty
         self.nonce = nonce
 
@@ -34,7 +32,6 @@ class Block:
             f'last_hash: {self.last_hash}, '
             f'hash: {self.hash}, '
             f'data: {self.data}, '
-            f'miner: {self.miner}'
             f'difficulty: {self.difficulty}), '
             f'nonce: {self.nonce})'
         )
@@ -56,7 +53,7 @@ class Block:
         return Block(**block_json)        
     
     @staticmethod
-    def mine_block(last_block, data, miner):
+    def mine_block(last_block, data):
         """
         Mine a block based on the given last_block and data, until block hash is found that
         meets the leading 0's proof of work requirement.
@@ -65,15 +62,15 @@ class Block:
         last_hash = last_block.hash
         difficulty = Block.adjust_difficulty(last_block, timestamp)
         nonce = 0
-        hash = crypto_hash(timestamp, last_hash, data, miner, difficulty, nonce)
+        hash = crypto_hash(timestamp, last_hash, data, difficulty, nonce)
         
         while hex_to_binary(hash)[0:difficulty] != '0' * difficulty:
             nonce += 1
             timestamp = time.time_ns()
             difficulty = Block.adjust_difficulty(last_block, timestamp)
-            hash = crypto_hash(timestamp, last_hash, data, miner, difficulty, nonce)
+            hash = crypto_hash(timestamp, last_hash, data, difficulty, nonce)
 
-        return Block(timestamp, last_hash, hash, data, miner, difficulty, nonce)
+        return Block(timestamp, last_hash, hash, data, difficulty, nonce)
 
     @staticmethod 
     def genesis():
@@ -119,7 +116,6 @@ class Block:
             block.timestamp,
             block.last_hash,
             block.data,
-            block.miner,
             block.difficulty,
             block.nonce
         )
@@ -130,7 +126,9 @@ class Block:
 
 def main():
     genesis_block = Block.genesis()
-    bad_block = Block.mine_block(Block.genesis(), 'foo', 'miner')
+    print(genesis_block)
+    exit()
+    bad_block = Block.mine_block(Block.genesis(), 'foo')
     bad_block.last_hash = 'evil_data'
     
     try:

@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 import os
 import requests
 import random
-from backend.config import REWARD, ROOT_PORT
+from backend.config import ROOT_PORT
 from backend.blockchain.blockchain import Blockchain
 from backend.pubsub import PubSub
 from backend.wallet.wallet import Wallet
@@ -11,7 +11,7 @@ from backend.wallet.transaction_pool import TransactionPool
 
 app = Flask(__name__)
 blockchain = Blockchain()
-wallet = Wallet()
+wallet = Wallet(blockchain)
 transaction_pool = TransactionPool()
 pubsub = PubSub(blockchain, transaction_pool)
 
@@ -26,23 +26,15 @@ def route_blockchain():
 
 @app.route('/blockchain/mine')
 def route_blockchain_mine():
-    transaction_data = 'stubbed_transaction_data'
-
-    blockchain.add_block(transaction_data, wallet.address)
-
+    transaction_data = transaction_pool.transaction_data()
+    transaction_data.append(Transaction.reward_transaction(wallet).to_json())
+    blockchain.add_block(transaction_data)
     block = blockchain.chain[-1]
+    
     pubsub.broadcast_block(block)
-
-    if block.miner == wallet.address:
-        wallet.fitcoin_balance += REWARD
+    transaction_pool.clear_blockchain_transactions(blockchain)
     
     return jsonify(block.to_json())
-
-
-@app.route('/wallet', methods=['GET'])
-def route_get_wallet_details():
-    return jsonify(wallet.to_json())
-
 
 @app.route('/wallet/transact', methods=['POST'])
 def route_wallet_transact():
@@ -66,6 +58,10 @@ def route_wallet_transact():
 
     return jsonify(transaction.to_json())
 
+
+@app.route('/wallet/info', methods=['GET'])
+def route_wallet_info():
+    return jsonify({'address': wallet.address, 'balance': wallet.balance})
 
 
 

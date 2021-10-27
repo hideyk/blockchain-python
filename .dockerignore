@@ -2,3 +2,4 @@
 */__pycache__
 README.md
 */.pytest_cache
+config.py
